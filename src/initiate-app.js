@@ -18,8 +18,12 @@ export const initiateApp = (app, express)=> {
     app.use('/user', routers.userRouter)
     app.use('/activity', routers.activityRouter)
     app.use('/restaurant', routers.restaurantRouter)
+    app.use('/photo', routers.photoRouter)
     app.use('/shop', routers.shopRouter)
     app.use('/program', routers.programRouter)
+    app.use('/book', routers.bookRouter)
+    app.use('/review', routers.reviewRouter)
+    app.use('/wishlist', routers.wishlistRouter)
 
     app.get('/', (req, res, next)=> {
         res.send("<h1> Welcome In Orange Bay App </h1>");

@@ -26,8 +26,22 @@ const programSchema = new mongoose.Schema({
     // Ticket prices for adults and children
     ticketPriceAdult: { type: Number, required: true },
     ticketPriceChild: { type: Number, required: true },
+    rate: {
+        type: Number,
+        default: 0
+    }
 },
-{ timestamps: true });
+{   timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+programSchema.virtual('Reviews', {
+    ref: 'Review',
+    localField: '_id',
+    foreignField: 'programId'
+})
+
 
 const Program = mongoose.model("Program", programSchema);
 

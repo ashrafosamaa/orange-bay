@@ -38,7 +38,7 @@ export const addActivity = async (req, res, next)=> {
 export const getAllActivities = async (req, res, next)=> {
     const {page, size} = req.query
     const features = new APIFeatures(req.query, Activity.find()
-    .select("title price coverImage.secure_url"))
+        .select("title price coverImage.secure_url"))
         .pagination({page, size})
     const activities = await features.mongooseQuery
     if(!activities.length) {
