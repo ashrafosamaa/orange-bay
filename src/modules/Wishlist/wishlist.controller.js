@@ -57,12 +57,12 @@ export const deleteProgramFromWishList = async (req, res, next) => {
         return next(new Error("Program not found", { cause: 404 }));
     }
     // delete wishlist
-    const deleteWishList = await WishList.deleteOne({
+    const deleteWishList = await WishList.findOneAndDelete({
         userId: req.authUser._id,
         programId: req.params.programId,
     });
     if(!deleteWishList){
-        return next(new Error("Program not deleted from wishlist", { cause: 400 }));
+        return next(new Error("Error while deleting program from wishlist", { cause: 400 }));
     }
     // send response
     res.status(200).json({

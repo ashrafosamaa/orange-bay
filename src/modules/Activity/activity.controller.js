@@ -56,7 +56,7 @@ export const getActivityById = async (req, res, next)=> {
     const {activityId} = req.params
     const activity = await Activity.findById(activityId).select("-createdAt -updatedAt -__v -folderId -coverImage.public_id")
     if(!activity) {
-        return next(new Error('No activity found', { cause: 404 }))
+        return next(new Error('Activity not found', { cause: 404 }))
     }
     res.status(200).json({ 
         msg: "Activity fetched successfully", 
