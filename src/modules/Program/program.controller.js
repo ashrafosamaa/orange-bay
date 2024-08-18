@@ -5,7 +5,7 @@ import Program from "./program.model.js";
 import cloudinaryConnection from "../../utils/cloudinary.js";
 
 export const addProgram = async (req, res, next)=> {
-    const { name, duration , description , city, schedule, ticketPriceAdult, ticketPriceChild } = req.body
+    const { name, duration , description , city, ticketPriceAdult, ticketPriceChild } = req.body
     // images 
     let images = []
     const folderId = generateUniqueString(4)
@@ -19,7 +19,7 @@ export const addProgram = async (req, res, next)=> {
     }
     const overview = { duration, description, city }
     const program = await Program.create({
-        name, overview, schedule, ticketPriceAdult, ticketPriceChild, images, folderId
+        name, overview, ticketPriceAdult, ticketPriceChild, images, folderId
     })
     if(!program) return next(new Error('Something went wrong, Please try again', { cause: 500 }))
     res.status(201).json({
@@ -88,5 +88,25 @@ export const deleteProgram = async (req, res, next)=> {
     res.status(200).json({
         msg: "Program deleted successfully",
         statusCode: 200,
+    })
+}
+
+export const addSchedule = async (req, res, next)=> {
+    const program = await Program.findById(req.params.programId)
+    program.schedule = req.body.schedule
+    await program.save()
+    res.status(200).json({
+        msg: "Schedule added successfully",
+        statusCode: 200
+    })
+}
+
+export const deleteAllSchedule = async (req, res, next)=> {
+    const program = await Program.findById(req.params.programId)
+    program.schedule = []
+    await program.save()
+    res.status(200).json({
+        msg: "Schedules deleted successfully",
+        statusCode: 200
     })
 }

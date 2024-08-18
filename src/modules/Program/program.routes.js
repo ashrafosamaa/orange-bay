@@ -29,5 +29,10 @@ router.put('/:programId', authUser('ADMIN'), validationMiddleware(validator.upda
 router.delete('/:programId', authUser('ADMIN'), validationMiddleware(validator.IDValidator),
     expressAsyncHandler(programController.deleteProgram))
 
+router.post('/schedule/:programId', authUser('ADMIN'), validationMiddleware(validator.addScheduleValidator),
+    expressAsyncHandler(programController.addSchedule))
+
+router.delete('/schedule/:programId', authUser('ADMIN'), validationMiddleware(validator.IDValidator),
+    expressAsyncHandler(programController.deleteAllSchedule))
 
 export default router
