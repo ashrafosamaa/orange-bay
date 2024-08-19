@@ -11,13 +11,14 @@ export const addProgram = async (req, res, next)=> {
     // images 
     let images = []
     const folderId = generateUniqueString(4)
-    if(req.files) {
-        for (const file of req.files.images) {
-            const { secure_url, public_id } = await cloudinaryConnection().uploader.upload(file.path, {
-                folder: `${process.env.MAIN_FOLDER}/Programs/${folderId}`
-            })
-            images.push({ secure_url, public_id })
-        }
+    if(!req.files.images?.length) {
+        return next (new Error("Images are required", { cause: 400 }))
+    }
+    for (const file of req.files.images) {
+        const { secure_url, public_id } = await cloudinaryConnection().uploader.upload(file.path, {
+            folder: `${process.env.MAIN_FOLDER}/Programs/${folderId}`
+        })
+        images.push({ secure_url, public_id })
     }
     const overview = { duration, description, city }
     const program = await Program.create({
