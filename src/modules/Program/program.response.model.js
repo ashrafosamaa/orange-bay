@@ -65,5 +65,6 @@ export function wishlistPorgrams(wishlist) {
             ticketPriceChild: wishlist.programId.ticketPriceChild,
             rate: wishlist.programId.rate,
         },
+        createdAt: wishlist.createdAt.toISOString().split('T')[0]
     }
 }

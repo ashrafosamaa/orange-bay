@@ -31,7 +31,7 @@ export const allProgramsInWishList = async (req, res, next) => {
     // check that order is found
     const features = new APIFeatures(req.query, WishList.find({userId: req.authUser._id})
         .populate({path: 'programId', select: 'name images.secure_url rate ticketPriceAdult ticketPriceChild'})
-        .select('-__v -createdAt -updatedAt'))
+        .select('-__v -updatedAt'))
         .pagination({page, size})
     const programs = await features.mongooseQuery
     if(!programs.length){
