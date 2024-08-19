@@ -8,6 +8,8 @@ export const addProgramValidator = {
         description: Joi.string().required().min(50).max(400),
         ticketPriceAdult: Joi.number().required(),
         ticketPriceChild: Joi.number().required(),
+        title: Joi.string().optional().min(3),
+        price: Joi.number().optional().min(1)
     })
 }
 
@@ -35,6 +37,8 @@ export const updateProgramValidator = {
         description: Joi.string().optional().min(50).max(400),
         ticketPriceAdult: Joi.number().optional(),
         ticketPriceChild: Joi.number().optional(),
+        title: Joi.string().optional().min(3),
+        price: Joi.number().optional().min(1)
     }),
     params: Joi.object({
         programId: Joi.string().length(24).hex().required()

@@ -21,7 +21,8 @@ export function programData(program) {
             time: item.time,
             activity: item.activity,
             _id: item._id, 
-        }))
+        })),
+        additionalActivity: program.additionalActivity
     }
 }
 
@@ -43,7 +44,6 @@ export function bookingProgram(book) {
             name: book.programId.name,
             images: book.programId.images[0].secure_url
         },
-        activity: book.activityId.title,
         adultNo: book.adultNo,
         childNo: book.childNo,
         date: book.date.toISOString().split('T')[0],

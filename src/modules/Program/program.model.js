@@ -13,6 +13,7 @@ const programSchema = new mongoose.Schema({
             activity: { type: String },
         },
     ],
+    additionalActivity: { title: { type: String }, price: { type: Number } },
     images: [
         {
             public_id: {type: String},

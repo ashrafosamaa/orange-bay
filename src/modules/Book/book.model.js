@@ -11,10 +11,6 @@ const bookSchema = new Schema({
         ref: "Program",
         required: true
     },
-    activityId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Activity',
-    },
 
     adultNo: {
         type: Number,
@@ -22,7 +18,12 @@ const bookSchema = new Schema({
     },
     childNo: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
+    },
+    activityNo: {
+        type: Number,
+        default: 0
     },
 
     date: {

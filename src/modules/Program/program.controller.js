@@ -7,8 +7,14 @@ import Program from "./program.model.js";
 import cloudinaryConnection from "../../utils/cloudinary.js";
 
 export const addProgram = async (req, res, next)=> {
-    const { name, duration , description , city, ticketPriceAdult, ticketPriceChild } = req.body
-    // images 
+    const { name, duration , description , city, ticketPriceAdult, ticketPriceChild, title, price } = req.body
+    if(title && !price) return next(new Error('Price of activity is required', { cause: 400 }))
+    if(!title && price) return next(new Error('Title of activity is required', { cause: 400 }))
+    let additionalActivity
+        if(title && price) {
+        additionalActivity = { title, price }
+    }
+    // images
     let images = []
     const folderId = generateUniqueString(4)
     if(!req.files.images?.length) {
@@ -22,7 +28,7 @@ export const addProgram = async (req, res, next)=> {
     }
     const overview = { duration, description, city }
     const program = await Program.create({
-        name, overview, ticketPriceAdult, ticketPriceChild, images, folderId
+        name, overview, ticketPriceAdult, ticketPriceChild, additionalActivity, images, folderId
     })
     if(!program) return next(new Error('Something went wrong, Please try again', { cause: 500 }))
     res.status(201).json({
@@ -58,7 +64,7 @@ export const getProgramById = async (req, res, next)=> {
 }
 
 export const updateProgram = async (req, res, next)=> {
-    const { name, duration , description , city, ticketPriceAdult, ticketPriceChild } = req.body
+    const { name, duration , description , city, ticketPriceAdult, ticketPriceChild, title, price } = req.body
     const program = await Program.findById(req.params.programId).select("-createdAt -updatedAt -__v -folderId -images.public_id")
     if(!program) return next(new Error('Program not found', { cause: 404 }))
     if(name) program.name = name
@@ -67,11 +73,13 @@ export const updateProgram = async (req, res, next)=> {
     if(city) program.overview.city = city
     if(ticketPriceAdult) program.ticketPriceAdult = ticketPriceAdult
     if(ticketPriceChild) program.ticketPriceChild = ticketPriceChild
+    if(title) program.additionalActivity.title = title
+    if(price) program.additionalActivity.price = price
     await program.save()
     res.status(200).json({
         msg: "Program updated successfully",
         statusCode: 200,
-        program
+        program: programData(program)
     })
 }
 
@@ -90,16 +98,18 @@ export const deleteProgram = async (req, res, next)=> {
 
 export const addSchedule = async (req, res, next)=> {
     const program = await Program.findById(req.params.programId)
+    if(!program) return next(new Error('Program not found', { cause: 404 }))
     program.schedule = req.body.schedule
     await program.save()
-    res.status(200).json({
+    res.status(201).json({
         msg: "Schedule added successfully",
-        statusCode: 200
+        statusCode: 201
     })
 }
 
 export const deleteAllSchedule = async (req, res, next)=> {
     const program = await Program.findById(req.params.programId)
+    if(!program) return next(new Error('Program not found', { cause: 404 }))
     program.schedule = []
     await program.save()
     res.status(200).json({

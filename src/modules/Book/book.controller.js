@@ -3,11 +3,10 @@ import { bookingProgram } from "../Program/program.response.model.js";
 
 import Book from "./book.model.js";
 import Program from "../Program/program.model.js";
-import Activity from "../Activity/activity.model.js";
 
 export const addBook = async (req, res, next) => {
     // destruct data from req.body
-    const { programId, adultNo, childNo, date, time, paymentMethod, activityId } = req.body;
+    const { programId, adultNo, childNo, date, time, paymentMethod, activityNo } = req.body;
     // check if user exists
     const user = await Book.findOne({userId: req.authUser._id, paymentstatus: "unpaid"});
     if (user) {
@@ -17,14 +16,6 @@ export const addBook = async (req, res, next) => {
     if (!isProgram) {
         return next(new Error("Program not found", { cause: 404 }));
     }
-    let activities
-    if(activityId){
-        // check activities avaliability
-        activities = await Activity.findById(activityId);
-        if (!activities) {
-            return next(new Error("Activity not found", { cause: 404 }));
-        }
-    }
     const dateFormate = new Date(date);
     // cancellation deadline
     const cancellationDeadline = new Date(dateFormate.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -32,12 +23,12 @@ export const addBook = async (req, res, next) => {
     let totalPrice = 
     (adultNo * (isProgram.ticketPriceAdult ?? 0)) + 
     (childNo * (isProgram.ticketPriceChild ?? 0)) + 
-    (activities?.price ?? 0) * adultNo;
+    (activityNo * (isProgram.additionalActivity?.price ?? 0));
     // create new book 
     const newBook = await Book.create({
         userId: req.authUser._id,
         programId,
-        activityId,
+        activityNo,
         adultNo,
         childNo,
         date: dateFormate,
@@ -61,7 +52,6 @@ export const getAllBooks = async (req, res, next) => {
     // get all books
     const features = new APIFeatures(req.query, Book.find({userId: req.authUser._id, status: status || "upcomming"})
         .populate({path: "programId", select:"name images.secure_url"})
-        .populate({path: "activityId", select:"title"})
         .select('date time adultNo childNo paymentstatus totalPrice cancellationDeadline'))
         .pagination({ page, size })
     const books = await features.mongooseQuery
