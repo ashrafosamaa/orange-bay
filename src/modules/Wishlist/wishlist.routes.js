@@ -10,13 +10,13 @@ import expressAsyncHandler from "express-async-handler";
 
 const router = Router();
 
-router.post('/:programId', authUser('ADMIN'), validationMiddleware(validator.addToWishListValidator),
+router.post('/:programId', authUser('USER'), validationMiddleware(validator.addToWishListValidator),
     expressAsyncHandler(wishlistController.addToWishList))
 
-router.get('/', authUser('ADMIN'), validationMiddleware(validator.allProgramsInWishListValidator), 
+router.get('/', authUser('USER'), validationMiddleware(validator.allProgramsInWishListValidator), 
     expressAsyncHandler(wishlistController.allProgramsInWishList))
 
-router.delete('/:programId', authUser('ADMIN'), validationMiddleware(validator.deleteProgramFromWishListValidator),
+router.delete('/:programId', authUser('USER'), validationMiddleware(validator.deleteProgramFromWishListValidator),
     expressAsyncHandler(wishlistController.deleteProgramFromWishList))
 
 

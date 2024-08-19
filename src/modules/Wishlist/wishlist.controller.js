@@ -1,4 +1,5 @@
 import { APIFeatures } from "../../utils/api-features.js";
+import { wishlistPorgrams } from "../Program/program.response.model.js";
 
 import WishList from "./wishlist.model.js";
 import Program from "../Program/program.model.js";
@@ -36,17 +37,11 @@ export const allProgramsInWishList = async (req, res, next) => {
     if(!programs.length){
         return next(new Error("Program not found", { cause: 404 }));
     }
-    const modifiedPrograms = programs.map(program => {
-        if (program.programId.images && program.programId.images.length > 0) {
-            program.programId.images = [program.programId.images[0]];
-        }
-        return program;
-    });
     // send response
     res.status(200).json({
         msg: "Reviews fetched successfully",
         statusCode: 200,
-        modifiedPrograms
+        programs: programs.map(program => wishlistPorgrams(program))
     });
 }
 

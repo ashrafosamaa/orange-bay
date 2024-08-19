@@ -1,4 +1,5 @@
 import { APIFeatures } from "../../utils/api-features.js";
+import { reviewsProgram } from "../Program/program.response.model.js";
 
 import Review from "./review.model.js";
 import Program from "../Program/program.model.js";
@@ -60,7 +61,7 @@ export const allProgramReviews = async (req, res, next) => {
     res.status(200).json({
         msg: "Reviews fetched successfully",
         statusCode: 200,
-        program
+        program: reviewsProgram(program)
     });
 }
 

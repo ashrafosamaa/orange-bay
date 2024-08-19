@@ -1,4 +1,5 @@
 import { APIFeatures } from "../../utils/api-features.js";
+import { bookingProgram } from "../Program/program.response.model.js";
 
 import Book from "./book.model.js";
 import Program from "../Program/program.model.js";
@@ -26,12 +27,12 @@ export const addBook = async (req, res, next) => {
     }
     const dateFormate = new Date(date);
     // cancellation deadline
-    const cancellationDeadline = new Date(dateFormate.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString();
+    const cancellationDeadline = new Date(dateFormate.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     // calculate total price
     let totalPrice = 
     (adultNo * (isProgram.ticketPriceAdult ?? 0)) + 
     (childNo * (isProgram.ticketPriceChild ?? 0)) + 
-    (activities.price ?? 0) * adultNo;
+    (activities?.price ?? 0) * adultNo;
     // create new book 
     const newBook = await Book.create({
         userId: req.authUser._id,
@@ -60,23 +61,18 @@ export const getAllBooks = async (req, res, next) => {
     // get all books
     const features = new APIFeatures(req.query, Book.find({userId: req.authUser._id, status: status || "upcomming"})
         .populate({path: "programId", select:"name images.secure_url"})
+        .populate({path: "activityId", select:"title"})
         .select('date time adultNo childNo paymentstatus totalPrice cancellationDeadline'))
         .pagination({ page, size })
     const books = await features.mongooseQuery
     if(!books.length) {
         return next(new Error("No books found", { cause: 404 }))
     }
-    const modifiedBooks = books.map(book => {
-        if (book.programId.images && book.programId.images.length > 0) {
-            book.programId.images = [book.programId.images[0]];
-        }
-        return book;
-    });
     // send response
     res.status(200).json({
         msg: "Books fetched successfully",
         statusCode: 200,
-        modifiedBooks
+        books: books.map(book => bookingProgram(book))
     })
 }
 
