@@ -1,6 +1,9 @@
 import { APIFeatures } from "../../utils/api-features.js";
 
 import User from "../User-Auth/user.model.js"
+import Book from "../Book/book.model.js"
+import Review from "../Review/review.model.js"
+import WishList from "../Wishlist/wishlist.model.js"
 
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
@@ -96,6 +99,10 @@ export const deleteUser = async(req, res, next)=> {
     if (!deleteUser) {
         return next (new Error("User not found", { cause: 404 }))
     }
+    // delete related data
+    await Book.deleteMany({userId})
+    await Review.deleteMany({userId})
+    await WishList.deleteMany({userId})
     // send response
     res.status(200).json({
         msg: "User deleted successfully",
@@ -189,6 +196,10 @@ export const deleteAccount = async (req, res, next)=> {
     if (!deleteUser) {
         return next (new Error("User not found", { cause: 404 }))
     }
+    // delete related data
+    await Book.deleteMany({userId: _id})
+    await Review.deleteMany({userId: _id})
+    await WishList.deleteMany({userId: _id})
     // send response
     res.status(200).json({
         msg: "User deleted successfully",
